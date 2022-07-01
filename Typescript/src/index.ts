@@ -33,6 +33,6 @@ export function order(
   if (orderTime === "Morning") {
     leadTime -= 1;
   }
-  clock.add(leadTime);
-  return clock.toCalendar();
+  const deliveryDate = clock.add(leadTime);
+  return deliveryDate.toCalendar();
 }

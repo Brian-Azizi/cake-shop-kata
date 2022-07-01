@@ -32,9 +32,10 @@ export class Clock {
     };
   }
 
-  public add(leadTime: number): void {
-    this.day = Clock.mapToDay(Clock.mapToNumber(this.day) + leadTime);
-    this.date += leadTime;
+  public add(leadTime: number): Clock {
+    const day = Clock.mapToDay(Clock.mapToNumber(this.day) + leadTime);
+    const date = this.date + leadTime;
+    return new Clock({ day, date, month: this.month, year: this.year });
   }
 
   private static mapToNumber(day: WeekDay): number {
