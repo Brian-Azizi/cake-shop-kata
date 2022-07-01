@@ -11,12 +11,15 @@ export type WeekDay =
 
 export interface Calendar {
   day: WeekDay;
+  date: number;
+  month: number;
+  year: number;
 }
 
 type OrderDate = Calendar;
 type DeliveryDate = Calendar;
 
-function add(date: Calendar, leadTime: number): Calendar {
+function add({ day, date, year, month }: Calendar, leadTime: number): Calendar {
   const DAYS: WeekDay[] = [
     "Monday",
     "Tuesday",
@@ -26,15 +29,20 @@ function add(date: Calendar, leadTime: number): Calendar {
     "Saturday",
     "Sunday",
   ];
-  function mapToNumber(date: Calendar): number {
-    return DAYS.indexOf(date.day);
+  function mapToNumber(day: WeekDay): number {
+    return DAYS.indexOf(day);
   }
 
-  function mapToDay(number: number): Calendar {
-    return { day: DAYS[number % 7] };
+  function mapToDay(number: number): WeekDay {
+    return DAYS[number % 7];
   }
 
-  return mapToDay(mapToNumber(date) + leadTime);
+  return {
+    day: mapToDay(mapToNumber(day) + leadTime),
+    year,
+    month,
+    date: date + leadTime,
+  };
 }
 
 export function order(size: Size, orderDate: OrderDate): DeliveryDate {

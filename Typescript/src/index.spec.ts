@@ -1,8 +1,23 @@
 import { Calendar, order, WeekDay } from ".";
 
-const calendarDay = (day: WeekDay): Calendar => ({
-  day,
-});
+const calendarDay = (day: WeekDay): Calendar => {
+  const DAYS: WeekDay[] = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+
+  return {
+    day,
+    date: DAYS.indexOf(day) + 1,
+    month: 1,
+    year: 2020,
+  };
+};
 
 describe("Cake Shop", () => {
   test("A small cake, ordered on Monday, is delivered on Wednesday", () => {
