@@ -75,4 +75,23 @@ describe("Cake Shop", () => {
     });
     expect(result).toStrictEqual(calendarDay("Wednesday"));
   });
+
+  test("An order for a big cake with a fancy box, placed on Monday morning, has a delivery date of Wednesday", () => {
+    const result = order({
+      size: "big",
+      orderDate: calendarDay("Monday"),
+      isMorningOrder: true,
+      withFancyBox: true,
+    });
+    expect(result).toStrictEqual(calendarDay("Wednesday"));
+  });
+
+  test("An order for a big cake with a fancy box, placed on Monday afternoon, has a delivery date of Thursday", () => {
+    const result = order({
+      size: "big",
+      orderDate: calendarDay("Monday"),
+      withFancyBox: true,
+    });
+    expect(result).toStrictEqual(calendarDay("Thursday"));
+  });
 });
