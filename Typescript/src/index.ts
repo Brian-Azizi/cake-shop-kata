@@ -23,15 +23,22 @@ type DeliveryDate = Calendar;
 
 type OrderTime = "Morning" | "Afternoon";
 
-export function order(
-  size: Size,
-  orderDate: OrderDate,
-  orderTime: OrderTime = "Afternoon",
-  customFrosting?: boolean
-): DeliveryDate {
+interface OrderOptions {
+  orderDate: OrderDate;
+  size: Size;
+  morningOrder?: boolean;
+  customFrosting?: boolean;
+}
+
+export function order({
+  orderDate,
+  size,
+  customFrosting,
+  morningOrder,
+}: OrderOptions): DeliveryDate {
   const clock = new Clock(orderDate);
   let leadTime = size === "small" ? 2 : 3;
-  if (orderTime === "Morning") {
+  if (morningOrder) {
     leadTime -= 1;
   }
   if (customFrosting) {

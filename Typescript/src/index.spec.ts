@@ -21,32 +21,40 @@ const calendarDay = (day: WeekDay): Calendar => {
 
 describe("Cake Shop", () => {
   test("A small cake, ordered on Monday, is delivered on Wednesday", () => {
-    const result = order("small", calendarDay("Monday"));
+    const result = order({ size: "small", orderDate: calendarDay("Monday") });
     expect(result).toStrictEqual(calendarDay("Wednesday"));
   });
 
   test("A small cake, ordered on Tuesday, is delivered on Thursday", () => {
-    const result = order("small", calendarDay("Tuesday"));
+    const result = order({ size: "small", orderDate: calendarDay("Tuesday") });
     expect(result).toStrictEqual(calendarDay("Thursday"));
   });
 
   test("A big cake, ordered on Monday, is delivered on Thursday", () => {
-    const result = order("big", calendarDay("Monday"));
+    const result = order({ size: "big", orderDate: calendarDay("Monday") });
     expect(result).toStrictEqual(calendarDay("Thursday"));
   });
 
   test("A big cake, ordered on Tuesday, is delivered on Friday", () => {
-    const result = order("big", calendarDay("Tuesday"));
+    const result = order({ size: "big", orderDate: calendarDay("Tuesday") });
     expect(result).toStrictEqual(calendarDay("Friday"));
   });
 
   test("An order for a small cake, placed on Monday morning, has a delivery date of Tuesday", () => {
-    const result = order("small", calendarDay("Monday"), "Morning");
+    const result = order({
+      size: "small",
+      orderDate: calendarDay("Monday"),
+      morningOrder: true,
+    });
     expect(result).toStrictEqual(calendarDay("Tuesday"));
   });
 
   test("An order for a small cake with custom frosting, received on Monday morning, has a delivery date of Thursday.", () => {
-    const result = order("small", calendarDay("Monday"), "Afternoon", true);
+    const result = order({
+      size: "small",
+      orderDate: calendarDay("Monday"),
+      customFrosting: true,
+    });
     expect(result).toStrictEqual(calendarDay("Thursday"));
   });
 });
