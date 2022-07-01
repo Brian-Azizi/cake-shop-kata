@@ -16,11 +16,15 @@ export class Clock {
     "Sunday",
   ];
 
-  constructor({ day, date, month, year }: CalendarDate) {
+  private constructor({ day, date, month, year }: CalendarDate) {
     this.day = day;
     this.date = date;
     this.month = month;
     this.year = year;
+  }
+
+  public static from(calendarDate: CalendarDate): Clock {
+    return new Clock(calendarDate);
   }
 
   public toCalendar(): CalendarDate {
@@ -53,7 +57,7 @@ export class Clock {
     return Clock.mapToDay(Clock.mapToNumber(day) + 1);
   }
 
-  public greaterThan({ date }: CalendarDate) {
+  public isAfter({ date }: CalendarDate) {
     return this.date > date;
   }
 }

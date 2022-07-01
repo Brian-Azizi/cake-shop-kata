@@ -35,17 +35,20 @@ export function order({
   isMorningOrder,
   withFancyBox,
 }: OrderOptions): CalendarDate {
-  const boxArrivalDate = withFancyBox
-    ? getBoxArrivalDate(orderDate)
-    : orderDate;
-  const bakedDate = new Baker().bake(orderDate, size, isMorningOrder);
-  const decoratedDate = new Decorator().decorate(bakedDate, hasCustomFrosting);
-  if (new Clock(boxArrivalDate).greaterThan(decoratedDate)) {
-    return boxArrivalDate;
+  const boxArrival = maybeOrderBox(orderDate, withFancyBox);
+  const baked = new Baker().bake(orderDate, size, isMorningOrder);
+  const finished = new Decorator().decorate(baked, hasCustomFrosting);
+
+  if (Clock.from(boxArrival).isAfter(finished)) {
+    return boxArrival;
   }
-  return decoratedDate;
+  return finished;
 }
 
-function getBoxArrivalDate(orderDate: CalendarDate): CalendarDate {
-  return new Clock(orderDate).add(2).toCalendar();
+function maybeOrderBox(
+  orderDate: CalendarDate,
+  withFancyBox?: boolean
+): CalendarDate {
+  if (!withFancyBox) return orderDate;
+  return Clock.from(orderDate).add(2).toCalendar();
 }

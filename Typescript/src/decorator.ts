@@ -21,6 +21,6 @@ export class Decorator extends Worker {
   ): CalendarDate {
     if (!hasCustomFrosting) return startDay;
     const daysToDoWork = this.calculateDaysToDoWork(startDay.day, 2);
-    return new Clock(startDay).add(daysToDoWork).toCalendar();
+    return Clock.from(startDay).add(daysToDoWork).toCalendar();
   }
 }

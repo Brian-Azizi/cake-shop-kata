@@ -27,6 +27,6 @@ export class Baker extends Worker {
       startDay.day,
       fullDaysOfWorkRequired
     );
-    return new Clock(startDay).add(daysToDoWork).toCalendar();
+    return Clock.from(startDay).add(daysToDoWork).toCalendar();
   }
 }
