@@ -1,5 +1,9 @@
 import { CalendarDate, WeekDay } from "./types";
 
+interface PartialCalendarDate extends Omit<CalendarDate, "day"> {
+  day?: WeekDay;
+}
+
 export class Clock implements CalendarDate {
   static DAYS: WeekDay[] = [
     "Monday",
@@ -11,7 +15,7 @@ export class Clock implements CalendarDate {
     "Sunday",
   ];
 
-  public static from(calendarDate: CalendarDate): Clock {
+  public static from(calendarDate: PartialCalendarDate): Clock {
     return new Clock(calendarDate);
   }
 
@@ -51,9 +55,9 @@ export class Clock implements CalendarDate {
 
   private jsDate: Date;
 
-  private constructor({ date, month, year, day }: CalendarDate) {
+  private constructor({ date, month, year, day }: PartialCalendarDate) {
     this.jsDate = new Date(year, month - 1, date);
-    if (day !== this.day) {
+    if (day && day !== this.day) {
       throw new Error(
         `${date}/${month}/${year} was a ${this.day}, not a ${day}`
       );

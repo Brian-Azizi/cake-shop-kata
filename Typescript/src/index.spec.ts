@@ -5,7 +5,6 @@ import { CalendarDate, WeekDay } from "./types";
 const calendarDay = (day: WeekDay, week = 0): CalendarDate =>
   Clock.from({
     // 1/1/2018 was a Monday
-    day,
     date: Clock.DAYS.indexOf(day) + 1 + week * 7,
     month: 1,
     year: 2018,
@@ -153,14 +152,11 @@ describe("Cake Shop", () => {
   test("Ordering a small cake on Monday 31/01 has a delivery date of Wednesday 02/02", () => {
     const result = order({
       size: "small",
-      orderDate: { date: 31, month: 1, year: 2022, day: "Monday" },
+      orderDate: Clock.from({ date: 31, month: 1, year: 2022 }),
     });
 
-    expect(result).toStrictEqual({
-      date: 2,
-      month: 2,
-      year: 2022,
-      day: "Wednesday",
-    });
+    expect(result).toStrictEqual(
+      Clock.from({ date: 2, month: 2, year: 2022 }).toCalendar()
+    );
   });
 });
