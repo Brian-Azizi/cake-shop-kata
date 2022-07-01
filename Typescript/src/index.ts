@@ -26,22 +26,22 @@ type OrderTime = "Morning" | "Afternoon";
 interface OrderOptions {
   orderDate: OrderDate;
   size: Size;
-  morningOrder?: boolean;
-  customFrosting?: boolean;
+  isMorningOrder?: boolean;
+  hasCustomFrosting?: boolean;
 }
 
 export function order({
   orderDate,
   size,
-  customFrosting,
-  morningOrder,
+  hasCustomFrosting,
+  isMorningOrder,
 }: OrderOptions): DeliveryDate {
   const clock = new Clock(orderDate);
   let leadTime = size === "small" ? 2 : 3;
-  if (morningOrder) {
+  if (isMorningOrder) {
     leadTime -= 1;
   }
-  if (customFrosting) {
+  if (hasCustomFrosting) {
     leadTime += 1;
   }
   const deliveryDate = clock.add(leadTime);

@@ -33,7 +33,7 @@ describe("Cake Shop", () => {
     const result = order({
       size: "small",
       orderDate: calendarDay("Monday"),
-      morningOrder: true,
+      isMorningOrder: true,
     });
     expect(result).toStrictEqual(calendarDay("Tuesday"));
   });
@@ -42,7 +42,7 @@ describe("Cake Shop", () => {
     const result = order({
       size: "small",
       orderDate: calendarDay("Monday"),
-      customFrosting: true,
+      hasCustomFrosting: true,
     });
     expect(result).toStrictEqual(calendarDay("Thursday"));
   });
