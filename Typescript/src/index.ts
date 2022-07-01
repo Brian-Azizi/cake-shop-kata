@@ -1,4 +1,5 @@
 import { Baker } from "./baker";
+import { Clock } from "./clock";
 import { Decorator } from "./decorator";
 
 export type Size = "small" | "big";
@@ -24,6 +25,7 @@ interface OrderOptions {
   size: Size;
   isMorningOrder?: boolean;
   hasCustomFrosting?: boolean;
+  withFancyBox?: boolean;
 }
 
 export function order({
@@ -31,8 +33,19 @@ export function order({
   size,
   hasCustomFrosting,
   isMorningOrder,
+  withFancyBox,
 }: OrderOptions): CalendarDate {
+  const boxArrivalDate = withFancyBox
+    ? getBoxArrivalDate(orderDate)
+    : orderDate;
   const bakedDate = new Baker().bake(orderDate, size, isMorningOrder);
   const decoratedDate = new Decorator().decorate(bakedDate, hasCustomFrosting);
+  if (new Clock(boxArrivalDate).greaterThan(decoratedDate)) {
+    return boxArrivalDate;
+  }
   return decoratedDate;
+}
+
+function getBoxArrivalDate(orderDate: CalendarDate): CalendarDate {
+  return new Clock(orderDate).add(2).toCalendar();
 }

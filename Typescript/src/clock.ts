@@ -52,4 +52,8 @@ export class Clock {
   static incrementDay(day: WeekDay): WeekDay {
     return Clock.mapToDay(Clock.mapToNumber(day) + 1);
   }
+
+  public greaterThan({ date }: CalendarDate) {
+    return this.date > date;
+  }
 }
