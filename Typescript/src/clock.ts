@@ -1,4 +1,4 @@
-import { CalendarDate, WeekDay } from "./index";
+import { CalendarDate, WeekDay } from "./types";
 
 export class Clock {
   public readonly day: WeekDay;

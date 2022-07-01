@@ -1,32 +1,7 @@
 import { Baker } from "./baker";
 import { Clock } from "./clock";
 import { Decorator } from "./decorator";
-
-export type Size = "small" | "big";
-
-export type WeekDay =
-  | "Monday"
-  | "Tuesday"
-  | "Wednesday"
-  | "Thursday"
-  | "Friday"
-  | "Saturday"
-  | "Sunday";
-
-export interface CalendarDate {
-  day: WeekDay;
-  date: number;
-  month: number;
-  year: number;
-}
-
-interface OrderOptions {
-  orderDate: CalendarDate;
-  size: Size;
-  isMorningOrder?: boolean;
-  hasCustomFrosting?: boolean;
-  withFancyBox?: boolean;
-}
+import { CalendarDate, Size } from "./types";
 
 export function order({
   orderDate,
@@ -43,6 +18,14 @@ export function order({
     return boxArrival;
   }
   return finished;
+}
+
+interface OrderOptions {
+  orderDate: CalendarDate;
+  size: Size;
+  isMorningOrder?: boolean;
+  hasCustomFrosting?: boolean;
+  withFancyBox?: boolean;
 }
 
 function maybeOrderBox(

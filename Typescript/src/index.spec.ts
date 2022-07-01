@@ -1,5 +1,6 @@
-import { CalendarDate, order, WeekDay } from ".";
+import { order } from ".";
 import { Clock } from "./clock";
+import { CalendarDate, WeekDay } from "./types";
 
 const calendarDay = (day: WeekDay, week = 0): CalendarDate => ({
   day,

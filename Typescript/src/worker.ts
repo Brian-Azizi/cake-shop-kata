@@ -1,5 +1,5 @@
 import { Clock } from "./clock";
-import { WeekDay } from "./index";
+import { WeekDay } from "./types";
 
 export class Worker {
   private readonly workDays: WeekDay[];

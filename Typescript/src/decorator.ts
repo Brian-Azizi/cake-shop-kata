@@ -1,5 +1,5 @@
 import { Clock } from "./clock";
-import { CalendarDate, WeekDay } from "./index";
+import { CalendarDate, WeekDay } from "./types";
 import { Worker } from "./worker";
 
 export class Decorator extends Worker {
