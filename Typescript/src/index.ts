@@ -40,8 +40,9 @@ const bakeCake =
   };
 
 const decorate = (clock: Clock) => (hasCustomFrosting?: boolean) => {
-  if (!hasCustomFrosting) return clock;
-  return clock.add(1);
+  const leadTime = hasCustomFrosting ? 1 : 0;
+  const daysOff: WeekDay[] = ["Sunday", "Monday"];
+  return clock.withDaysOff(daysOff).add(leadTime);
 };
 
 export function order({

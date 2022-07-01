@@ -1,7 +1,7 @@
 import { Calendar, WeekDay } from "./index";
 
 export class Clock {
-  private readonly day: WeekDay;
+  public readonly day: WeekDay;
   private readonly date: number;
   private readonly month: number;
   private readonly year: number;
