@@ -1,5 +1,5 @@
 import { Clock } from "./clock";
-import { CalendarDate, Size, WeekDay } from "./types";
+import { Size, WeekDay } from "./types";
 import { Worker } from "./worker";
 
 export class Baker extends Worker {
@@ -11,28 +11,33 @@ export class Baker extends Worker {
     "Friday",
   ];
 
+  private static DAYS_FOR_SMALL_CAKE = 2;
+  private static DAYS_FOR_BIG_CAKE = 3;
+  private static DAYS_TO_ADD_NUTS = 1;
+
   constructor() {
     super(Baker.WORK_DAYS);
   }
 
-  public bake(
-    startDay: CalendarDate,
-    size: Size,
-    isMorningOrder?: boolean
-  ): CalendarDate {
-    const fullDaysOfWorkRequired = size === "big" ? 3 : 2;
+  public bake(startDay: Clock, size: Size, isMorningOrder?: boolean): Clock {
+    const fullDaysOfWorkRequired =
+      size === "big" ? Baker.DAYS_FOR_BIG_CAKE : Baker.DAYS_FOR_SMALL_CAKE;
 
     const daysToDoWork = this.calculateDaysToDoWork(
       startDay.day,
       fullDaysOfWorkRequired,
       isMorningOrder
     );
-    return Clock.from(startDay).add(daysToDoWork).toCalendar();
+
+    return startDay.add(daysToDoWork);
   }
 
-  addNuts(orderDate: CalendarDate, withNuts?: boolean): CalendarDate {
+  addNuts(orderDate: Clock, withNuts?: boolean): Clock {
     if (!withNuts) return orderDate;
-    const daysToDoWork = this.calculateDaysToDoWork(orderDate.day, 1);
-    return Clock.from(orderDate).add(daysToDoWork).toCalendar();
+    const daysToDoWork = this.calculateDaysToDoWork(
+      orderDate.day,
+      Baker.DAYS_TO_ADD_NUTS
+    );
+    return orderDate.add(daysToDoWork);
   }
 }

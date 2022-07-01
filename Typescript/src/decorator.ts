@@ -1,5 +1,5 @@
 import { Clock } from "./clock";
-import { CalendarDate, WeekDay } from "./types";
+import { WeekDay } from "./types";
 import { Worker } from "./worker";
 
 export class Decorator extends Worker {
@@ -11,16 +11,18 @@ export class Decorator extends Worker {
     "Saturday",
   ];
 
+  private static DAYS_TO_ADD_FROSTIC = 2;
+
   constructor() {
     super(Decorator.WORK_DAYS);
   }
 
-  public decorate(
-    startDay: CalendarDate,
-    hasCustomFrosting?: boolean
-  ): CalendarDate {
+  public decorate(startDay: Clock, hasCustomFrosting?: boolean): Clock {
     if (!hasCustomFrosting) return startDay;
-    const daysToDoWork = this.calculateDaysToDoWork(startDay.day, 2);
-    return Clock.from(startDay).add(daysToDoWork).toCalendar();
+    const daysToDoWork = this.calculateDaysToDoWork(
+      startDay.day,
+      Decorator.DAYS_TO_ADD_FROSTIC
+    );
+    return startDay.add(daysToDoWork);
   }
 }

@@ -1,3 +1,5 @@
+import { Clock } from "./clock";
+
 export type Size = "small" | "big";
 
 export type WeekDay =

@@ -11,15 +11,18 @@ export function order({
   withFancyBox,
   withNuts,
 }: OrderOptions): CalendarDate {
-  const boxArrival = maybeOrderBox(orderDate, withFancyBox);
-  const baked = new Baker().bake(orderDate, size, isMorningOrder);
+  const startDate = Clock.from(orderDate);
+
+  const boxArrival = maybeOrderBox(startDate, withFancyBox);
+  const baked = new Baker().bake(startDate, size, isMorningOrder);
   const decorated = new Decorator().decorate(baked, hasCustomFrosting);
   const finished = new Baker().addNuts(decorated, withNuts);
 
-  if (Clock.from(boxArrival).isAfter(finished)) {
-    return boxArrival;
+  if (boxArrival.isAfter(finished)) {
+    return boxArrival.toCalendar();
   }
-  return finished;
+
+  return finished.toCalendar();
 }
 
 interface OrderOptions {
@@ -31,10 +34,8 @@ interface OrderOptions {
   withNuts?: boolean;
 }
 
-function maybeOrderBox(
-  orderDate: CalendarDate,
-  withFancyBox?: boolean
-): CalendarDate {
+function maybeOrderBox(orderDate: Clock, withFancyBox?: boolean): Clock {
   if (!withFancyBox) return orderDate;
-  return Clock.from(orderDate).add(2).toCalendar();
+  const deliveryTime = 2;
+  return orderDate.add(deliveryTime);
 }

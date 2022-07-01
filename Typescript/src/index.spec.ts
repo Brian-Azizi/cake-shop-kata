@@ -2,12 +2,14 @@ import { order } from ".";
 import { Clock } from "./clock";
 import { CalendarDate, WeekDay } from "./types";
 
-const calendarDay = (day: WeekDay, week = 0): CalendarDate => ({
-  day,
-  date: Clock.DAYS.indexOf(day) + 1 + week * 7,
-  month: 1,
-  year: 2018,
-});
+const calendarDay = (day: WeekDay, week = 0): CalendarDate =>
+  Clock.from({
+    // 1/1/2018 was a Monday
+    day,
+    date: Clock.DAYS.indexOf(day) + 1 + week * 7,
+    month: 1,
+    year: 2018,
+  }).toCalendar();
 
 describe("Cake Shop", () => {
   test("A small cake, ordered on Monday, is delivered on Wednesday", () => {
