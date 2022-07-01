@@ -44,4 +44,9 @@ describe("Cake Shop", () => {
     const result = order("small", calendarDay("Monday"), "Morning");
     expect(result).toStrictEqual(calendarDay("Tuesday"));
   });
+
+  test("An order for a small cake with custom frosting, received on Monday morning, has a delivery date of Thursday.", () => {
+    const result = order("small", calendarDay("Monday"), "Afternoon", true);
+    expect(result).toStrictEqual(calendarDay("Thursday"));
+  });
 });

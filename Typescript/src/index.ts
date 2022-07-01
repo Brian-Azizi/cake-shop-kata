@@ -26,12 +26,16 @@ type OrderTime = "Morning" | "Afternoon";
 export function order(
   size: Size,
   orderDate: OrderDate,
-  orderTime: OrderTime = "Afternoon"
+  orderTime: OrderTime = "Afternoon",
+  customFrosting?: boolean
 ): DeliveryDate {
   const clock = new Clock(orderDate);
   let leadTime = size === "small" ? 2 : 3;
   if (orderTime === "Morning") {
     leadTime -= 1;
+  }
+  if (customFrosting) {
+    leadTime += 1;
   }
   const deliveryDate = clock.add(leadTime);
   return deliveryDate.toCalendar();
