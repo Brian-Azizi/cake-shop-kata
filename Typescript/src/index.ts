@@ -53,7 +53,7 @@ class Worker {
       if (remainingDaysOfWork === 0) {
         break;
       }
-      today = Clock.incrementDayByN(today, 1);
+      today = Clock.incrementDay(today);
       daysPassed++;
     }
 
