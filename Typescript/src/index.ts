@@ -21,9 +21,18 @@ export interface Calendar {
 type OrderDate = Calendar;
 type DeliveryDate = Calendar;
 
-export function order(size: Size, orderDate: OrderDate): DeliveryDate {
+type OrderTime = "Morning" | "Afternoon";
+
+export function order(
+  size: Size,
+  orderDate: OrderDate,
+  orderTime: OrderTime = "Afternoon"
+): DeliveryDate {
   const clock = new Clock(orderDate);
-  const leadTime = size === "small" ? 2 : 3;
+  let leadTime = size === "small" ? 2 : 3;
+  if (orderTime === "Morning") {
+    leadTime -= 1;
+  }
   clock.add(leadTime);
   return clock.toCalendar();
 }
