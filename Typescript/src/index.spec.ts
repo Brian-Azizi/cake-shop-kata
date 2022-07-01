@@ -215,7 +215,7 @@ describe("Cake Shop", () => {
     );
   });
 
-  test.only("A small cake with a fancy box, ordered on the 21st of December has a delivery date of 3rd January", () => {
+  test("A small cake with a fancy box, ordered on the 21st of December has a delivery date of 3rd January", () => {
     const result = order({
       size: "small",
       orderDate: Clock.from({ date: 21, month: 12, year: 2018 }),
