@@ -38,7 +38,10 @@ class Worker {
     return this.workDays.includes(day);
   }
 
-  calculateDaysToDoWork(startDay: WeekDay, fullDaysRequired: number): number {
+  protected calculateDaysToDoWork(
+    startDay: WeekDay,
+    fullDaysRequired: number
+  ): number {
     let remainingDaysOfWork = fullDaysRequired;
     let today = startDay;
     let daysPassed = 0;
@@ -59,8 +62,7 @@ class Worker {
 }
 
 class Decorator extends Worker {
-  private readonly hasCustomFrosting?: boolean;
-  static WORK_DAYS: WeekDay[] = [
+  private static WORK_DAYS: WeekDay[] = [
     "Tuesday",
     "Wednesday",
     "Thursday",
@@ -68,21 +70,18 @@ class Decorator extends Worker {
     "Saturday",
   ];
 
-  constructor(hasCustomFrosting?: boolean) {
+  constructor() {
     super(Decorator.WORK_DAYS);
-    this.hasCustomFrosting = hasCustomFrosting;
   }
 
-  calculateDaysToDoWork(startDay: WeekDay): number {
-    if (!this.hasCustomFrosting) return 0;
-    return super.calculateDaysToDoWork(startDay, 2);
+  public decorate(startDay: Calendar, hasCustomFrosting?: boolean): Calendar {
+    if (!hasCustomFrosting) return startDay;
+    const daysToDoWork = this.calculateDaysToDoWork(startDay.day, 2);
+    return new Clock(startDay).add(daysToDoWork).toCalendar();
   }
 }
 
 class Baker extends Worker {
-  private readonly isMorningOrder?: boolean;
-  private readonly size: Size;
-
   static WORK_DAYS: WeekDay[] = [
     "Monday",
     "Tuesday",
@@ -91,17 +90,23 @@ class Baker extends Worker {
     "Friday",
   ];
 
-  constructor(size: Size, isMorningOrder?: boolean) {
+  constructor() {
     super(Baker.WORK_DAYS);
-    this.isMorningOrder = isMorningOrder;
-    this.size = size;
   }
 
-  calculateDaysToDoWork(startDay: WeekDay): number {
-    let fullDaysOfWorkRequired = this.size === "big" ? 3 : 2;
-    if (!this.isMorningOrder) fullDaysOfWorkRequired++;
+  public bake(
+    startDay: Calendar,
+    size: Size,
+    isMorningOrder?: boolean
+  ): Calendar {
+    let fullDaysOfWorkRequired = size === "big" ? 3 : 2;
+    if (!isMorningOrder) fullDaysOfWorkRequired++;
 
-    return super.calculateDaysToDoWork(startDay, fullDaysOfWorkRequired);
+    const daysToDoWork = this.calculateDaysToDoWork(
+      startDay.day,
+      fullDaysOfWorkRequired
+    );
+    return new Clock(startDay).add(daysToDoWork).toCalendar();
   }
 }
 
@@ -111,11 +116,7 @@ export function order({
   hasCustomFrosting,
   isMorningOrder,
 }: OrderOptions): DeliveryDate {
-  const baker = new Baker(size, isMorningOrder);
-  const b = baker.calculateDaysToDoWork(orderDate.day);
-  const decorator = new Decorator(hasCustomFrosting);
-  const d = decorator.calculateDaysToDoWork(
-    Clock.incrementDayByN(orderDate.day, b)
-  );
-  return new Clock(orderDate).add(b + d).toCalendar();
+  const bakedDate = new Baker().bake(orderDate, size, isMorningOrder);
+  const decoratedDate = new Decorator().decorate(bakedDate, hasCustomFrosting);
+  return decoratedDate;
 }
