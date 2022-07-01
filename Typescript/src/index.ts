@@ -1,3 +1,5 @@
+import { Clock } from "./clock";
+
 type Size = "small" | "big";
 
 export type WeekDay =
@@ -19,33 +21,9 @@ export interface Calendar {
 type OrderDate = Calendar;
 type DeliveryDate = Calendar;
 
-function add({ day, date, year, month }: Calendar, leadTime: number): Calendar {
-  const DAYS: WeekDay[] = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-  ];
-  function mapToNumber(day: WeekDay): number {
-    return DAYS.indexOf(day);
-  }
-
-  function mapToDay(number: number): WeekDay {
-    return DAYS[number % 7];
-  }
-
-  return {
-    day: mapToDay(mapToNumber(day) + leadTime),
-    year,
-    month,
-    date: date + leadTime,
-  };
-}
-
 export function order(size: Size, orderDate: OrderDate): DeliveryDate {
+  const clock = new Clock(orderDate);
   const leadTime = size === "small" ? 2 : 3;
-  return add(orderDate, leadTime);
+  clock.add(leadTime);
+  return clock.toCalendar();
 }
