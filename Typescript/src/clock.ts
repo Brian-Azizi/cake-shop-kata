@@ -1,10 +1,11 @@
 import { Calendar, WeekDay } from "./index";
 
 export class Clock {
-  private day: WeekDay;
-  private date: number;
-  private month: number;
-  private year: number;
+  private readonly day: WeekDay;
+  private readonly date: number;
+  private readonly month: number;
+  private readonly year: number;
+  private readonly daysOff: WeekDay[];
 
   static DAYS: WeekDay[] = [
     "Monday",
@@ -16,11 +17,12 @@ export class Clock {
     "Sunday",
   ];
 
-  constructor({ day, date, month, year }: Calendar) {
+  constructor({ day, date, month, year }: Calendar, daysOff: WeekDay[] = []) {
     this.day = day;
     this.date = date;
     this.month = month;
     this.year = year;
+    this.daysOff = daysOff;
   }
 
   public toCalendar(): Calendar {
@@ -32,10 +34,31 @@ export class Clock {
     };
   }
 
+  public withDaysOff(daysOff: WeekDay[]): Clock {
+    return new Clock(this.toCalendar(), daysOff);
+  }
+
   public add(leadTime: number): Clock {
-    const day = Clock.mapToDay(Clock.mapToNumber(this.day) + leadTime);
-    const date = this.date + leadTime;
-    return new Clock({ day, date, month: this.month, year: this.year });
+    let dayNumber = Clock.mapToNumber(this.day);
+    let date = this.date;
+    while (leadTime > 0) {
+      dayNumber += 1;
+      date += 1;
+      if (!this.daysOff.includes(Clock.mapToDay(dayNumber))) {
+        leadTime--;
+      }
+    }
+
+    const day = Clock.mapToDay(dayNumber);
+    return new Clock(
+      {
+        day,
+        date,
+        month: this.month,
+        year: this.year,
+      },
+      this.daysOff
+    );
   }
 
   private static mapToNumber(day: WeekDay): number {

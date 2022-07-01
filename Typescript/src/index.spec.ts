@@ -1,9 +1,9 @@
 import { Calendar, order, WeekDay } from ".";
 import { Clock } from "./clock";
 
-const calendarDay = (day: WeekDay): Calendar => ({
+const calendarDay = (day: WeekDay, week = 0): Calendar => ({
   day,
-  date: Clock.DAYS.indexOf(day) + 1,
+  date: Clock.DAYS.indexOf(day) + 1 + week * 7,
   month: 1,
   year: 2020,
 });
@@ -45,5 +45,14 @@ describe("Cake Shop", () => {
       hasCustomFrosting: true,
     });
     expect(result).toStrictEqual(calendarDay("Thursday"));
+  });
+
+  test("An order for a small cake received on Friday morning has a delivery date of Monday", () => {
+    const result = order({
+      size: "small",
+      orderDate: calendarDay("Friday"),
+      isMorningOrder: true,
+    });
+    expect(result).toStrictEqual(calendarDay("Monday", 1));
   });
 });

@@ -30,25 +30,19 @@ interface OrderOptions {
   hasCustomFrosting?: boolean;
 }
 
-function bakeCake(
-  size: "small" | "big",
-  orderDate: Calendar,
-  isMorningOrder: boolean | undefined
-) {
-  let leadTime = size === "small" ? 2 : 3;
-  if (isMorningOrder) {
-    leadTime -= 1;
-  }
-  return new Clock(orderDate).add(leadTime).toCalendar();
-}
+const bakeCake =
+  (clock: Clock) => (size: "small" | "big", isMorningOrder?: boolean) => {
+    let leadTime = size === "small" ? 2 : 3;
+    if (isMorningOrder) {
+      leadTime -= 1;
+    }
+    return clock.withDaysOff(["Saturday", "Sunday"]).add(leadTime);
+  };
 
-function decorate(
-  bakeFinishedDate: Calendar,
-  hasCustomFrosting: boolean | undefined
-) {
-  if (!hasCustomFrosting) return bakeFinishedDate;
-  return new Clock(bakeFinishedDate).add(1).toCalendar();
-}
+const decorate = (clock: Clock) => (hasCustomFrosting?: boolean) => {
+  if (!hasCustomFrosting) return clock;
+  return clock.add(1);
+};
 
 export function order({
   orderDate,
@@ -56,7 +50,8 @@ export function order({
   hasCustomFrosting,
   isMorningOrder,
 }: OrderOptions): DeliveryDate {
-  const bakeFinishedDate = bakeCake(size, orderDate, isMorningOrder);
-  const decorationFinishedDate = decorate(bakeFinishedDate, hasCustomFrosting);
-  return decorationFinishedDate;
+  const ordered = new Clock(orderDate);
+  const baked = bakeCake(ordered)(size, isMorningOrder);
+  const decorated = decorate(baked)(hasCustomFrosting);
+  return decorated.toCalendar();
 }
