@@ -6,7 +6,7 @@ const calendarDay = (day: WeekDay, week = 0): CalendarDate => ({
   day,
   date: Clock.DAYS.indexOf(day) + 1 + week * 7,
   month: 1,
-  year: 2020,
+  year: 2018,
 });
 
 describe("Cake Shop", () => {
@@ -146,5 +146,19 @@ describe("Cake Shop", () => {
       withNuts: true,
     });
     expect(result).toStrictEqual(calendarDay("Monday", 1));
+  });
+
+  test("Ordering a small cake on Monday 31/01 has a delivery date of Wednesday 02/02", () => {
+    const result = order({
+      size: "small",
+      orderDate: { date: 31, month: 1, year: 2022, day: "Monday" },
+    });
+
+    expect(result).toStrictEqual({
+      date: 2,
+      month: 2,
+      year: 2022,
+      day: "Wednesday",
+    });
   });
 });

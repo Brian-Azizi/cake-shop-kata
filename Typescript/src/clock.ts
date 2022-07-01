@@ -1,10 +1,7 @@
 import { CalendarDate, WeekDay } from "./types";
 
 export class Clock {
-  public readonly day: WeekDay;
-  private readonly date: number;
-  private readonly month: number;
-  private readonly year: number;
+  private jsDate: Date;
 
   static DAYS: WeekDay[] = [
     "Monday",
@@ -16,33 +13,35 @@ export class Clock {
     "Sunday",
   ];
 
-  private constructor({ day, date, month, year }: CalendarDate) {
-    this.day = day;
-    this.date = date;
-    this.month = month;
-    this.year = year;
+  private constructor({ date, month, year }: CalendarDate) {
+    this.jsDate = new Date(year, month - 1, date);
   }
 
   public static from(calendarDate: CalendarDate): Clock {
     return new Clock(calendarDate);
   }
 
+  private static fromJsDate(date: Date): Clock {
+    return new Clock(Clock.jsDateToCalendar(date));
+  }
+
   public toCalendar(): CalendarDate {
+    return Clock.jsDateToCalendar(this.jsDate);
+  }
+
+  private static jsDateToCalendar(date: Date): CalendarDate {
     return {
-      day: this.day,
-      date: this.date,
-      month: this.month,
-      year: this.year,
+      day: Clock.mapToDay(date.getDay() + 6),
+      date: date.getDate(),
+      month: date.getMonth() + 1,
+      year: date.getFullYear(),
     };
   }
 
   public add(numberOfDays: number): Clock {
-    return new Clock({
-      day: Clock.mapToDay(Clock.mapToNumber(this.day) + numberOfDays),
-      date: this.date + numberOfDays,
-      month: this.month,
-      year: this.year,
-    });
+    const date = new Date(this.jsDate.valueOf());
+    date.setDate(date.getDate() + numberOfDays);
+    return Clock.fromJsDate(date);
   }
 
   private static mapToNumber(day: WeekDay): number {
@@ -57,7 +56,7 @@ export class Clock {
     return Clock.mapToDay(Clock.mapToNumber(day) + 1);
   }
 
-  public isAfter({ date }: CalendarDate) {
-    return this.date > date;
+  public isAfter({ date, year, month }: CalendarDate) {
+    return this.jsDate.valueOf() > new Date(year, month - 1, date).valueOf();
   }
 }

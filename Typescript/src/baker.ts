@@ -1,5 +1,4 @@
 import { Clock } from "./clock";
-import { order } from "./index";
 import { CalendarDate, Size, WeekDay } from "./types";
 import { Worker } from "./worker";
 
