@@ -18,10 +18,11 @@ export class Worker {
     startWorkOnSameDay?: boolean
   ): number {
     let remainingDaysOfWork = fullDaysRequired;
-    let today = startDay;
     let daysPassed = 0;
 
-    if (this.isWorkday(today) && startWorkOnSameDay) {
+    let today = startWorkOnSameDay ? startDay : Clock.incrementDay(startDay);
+
+    if (startWorkOnSameDay) {
       remainingDaysOfWork--;
       today = Clock.incrementDay(today);
     }
@@ -29,12 +30,9 @@ export class Worker {
     while (remainingDaysOfWork > 0) {
       if (this.isWorkday(today)) {
         remainingDaysOfWork--;
-        daysPassed++;
-      }
-      if (remainingDaysOfWork === 0) {
-        break;
       }
       today = Clock.incrementDay(today);
+      daysPassed++;
     }
 
     return daysPassed;
