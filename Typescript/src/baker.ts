@@ -1,4 +1,5 @@
 import { Clock } from "./clock";
+import { order } from "./index";
 import { CalendarDate, Size, WeekDay } from "./types";
 import { Worker } from "./worker";
 
@@ -20,13 +21,19 @@ export class Baker extends Worker {
     size: Size,
     isMorningOrder?: boolean
   ): CalendarDate {
-    let fullDaysOfWorkRequired = size === "big" ? 3 : 2;
-    if (!isMorningOrder) fullDaysOfWorkRequired++;
+    const fullDaysOfWorkRequired = size === "big" ? 3 : 2;
 
     const daysToDoWork = this.calculateDaysToDoWork(
       startDay.day,
-      fullDaysOfWorkRequired
+      fullDaysOfWorkRequired,
+      isMorningOrder
     );
     return Clock.from(startDay).add(daysToDoWork).toCalendar();
+  }
+
+  addNuts(orderDate: CalendarDate, withNuts?: boolean): CalendarDate {
+    if (!withNuts) return orderDate;
+    const daysToDoWork = this.calculateDaysToDoWork(orderDate.day, 1);
+    return Clock.from(orderDate).add(daysToDoWork).toCalendar();
   }
 }

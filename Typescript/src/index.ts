@@ -9,10 +9,12 @@ export function order({
   hasCustomFrosting,
   isMorningOrder,
   withFancyBox,
+  withNuts,
 }: OrderOptions): CalendarDate {
   const boxArrival = maybeOrderBox(orderDate, withFancyBox);
   const baked = new Baker().bake(orderDate, size, isMorningOrder);
-  const finished = new Decorator().decorate(baked, hasCustomFrosting);
+  const decorated = new Decorator().decorate(baked, hasCustomFrosting);
+  const finished = new Baker().addNuts(decorated, withNuts);
 
   if (Clock.from(boxArrival).isAfter(finished)) {
     return boxArrival;
@@ -26,6 +28,7 @@ interface OrderOptions {
   isMorningOrder?: boolean;
   hasCustomFrosting?: boolean;
   withFancyBox?: boolean;
+  withNuts?: boolean;
 }
 
 function maybeOrderBox(

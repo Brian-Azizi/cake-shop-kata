@@ -39,11 +39,22 @@ describe("Cake Shop", () => {
     expect(result).toStrictEqual(calendarDay("Tuesday"));
   });
 
+  test("An order for a small cake with custom frosting, received on Monday afternoon, has a delivery date of Friday.", () => {
+    const result = order({
+      size: "small",
+      orderDate: calendarDay("Monday"),
+      hasCustomFrosting: true,
+      isMorningOrder: true,
+    });
+    expect(result).toStrictEqual(calendarDay("Thursday"));
+  });
+
   test("An order for a small cake with custom frosting, received on Monday morning, has a delivery date of Thursday.", () => {
     const result = order({
       size: "small",
       orderDate: calendarDay("Monday"),
       hasCustomFrosting: true,
+      isMorningOrder: true,
     });
     expect(result).toStrictEqual(calendarDay("Thursday"));
   });
@@ -94,5 +105,37 @@ describe("Cake Shop", () => {
       withFancyBox: true,
     });
     expect(result).toStrictEqual(calendarDay("Thursday"));
+  });
+
+  test("An order for a small cake with nuts placed on Monday morning has a delivery date of Wednesday", () => {
+    const result = order({
+      size: "small",
+      orderDate: calendarDay("Monday"),
+      isMorningOrder: true,
+      withNuts: true,
+    });
+    expect(result).toStrictEqual(calendarDay("Wednesday"));
+  });
+
+  test("An order for a small cake with frosting placed on Monday morning has a delivery date of Friday", () => {
+    const result = order({
+      size: "small",
+      orderDate: calendarDay("Monday"),
+      isMorningOrder: true,
+      withNuts: true,
+    });
+    expect(result).toStrictEqual(calendarDay("Wednesday"));
+  });
+
+  test("An order for a small cake with frosting, in a fancy box, placed on Tuesday morning, has a delivery date of Monday", () => {
+    const result = order({
+      size: "small",
+      orderDate: calendarDay("Tuesday"),
+      hasCustomFrosting: true,
+      withFancyBox: true,
+      isMorningOrder: true,
+      withNuts: true,
+    });
+    expect(result).toStrictEqual(calendarDay("Monday", 1));
   });
 });
