@@ -30,15 +30,6 @@ interface OrderOptions {
   hasCustomFrosting?: boolean;
 }
 
-const bakeCake =
-  (clock: Clock) => (size: "small" | "big", isMorningOrder?: boolean) => {
-    let leadTime = size === "small" ? 2 : 3;
-    if (isMorningOrder) {
-      leadTime -= 1;
-    }
-    return clock.withDaysOff(["Saturday", "Sunday"]).add(leadTime);
-  };
-
 const bake = (
   size: Size,
   orderDay: WeekDay,
@@ -85,15 +76,19 @@ const decorate = (orderDay: WeekDay, hasCustomFrosting?: boolean): number => {
     ];
     return WORK_DAYS.includes(day);
   }
+  if (!hasCustomFrosting) {
+    return 0;
+  }
 
-  let remainingDaysOfWork = hasCustomFrosting ? 2 : 0;
+  let remainingDaysOfWork = 1;
   let today = orderDay;
   let daysPassed = 0;
 
-  if (isWorkday(today) && hasCustomFrosting) {
-    remainingDaysOfWork--;
+  if (!isWorkday(today)) {
     today = Clock.incrementDayByN(today, 1);
+    daysPassed++;
   }
+
   while (remainingDaysOfWork > 0) {
     if (isWorkday(today)) {
       remainingDaysOfWork--;
@@ -103,12 +98,6 @@ const decorate = (orderDay: WeekDay, hasCustomFrosting?: boolean): number => {
   }
 
   return daysPassed;
-};
-
-const decorateCake = (clock: Clock) => (hasCustomFrosting?: boolean) => {
-  const leadTime = hasCustomFrosting ? 1 : 0;
-  const daysOff: WeekDay[] = ["Sunday", "Monday"];
-  return clock.withDaysOff(daysOff).add(leadTime);
 };
 
 export function order({
