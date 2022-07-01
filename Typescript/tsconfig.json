@@ -12,7 +12,8 @@
     "esModuleInterop": true,
     "lib": ["es2020", "dom"],
     "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "strict": true
   },
   "exclude": ["node_modules", "**/*/dist"]
 }
