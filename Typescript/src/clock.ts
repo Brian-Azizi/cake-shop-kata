@@ -68,4 +68,8 @@ export class Clock {
   private static mapToDay(number: number): WeekDay {
     return Clock.DAYS[number % 7];
   }
+
+  static incrementDayByN(day: WeekDay, n: number): WeekDay {
+    return Clock.mapToDay(Clock.mapToNumber(day) + n);
+  }
 }

@@ -39,7 +39,73 @@ const bakeCake =
     return clock.withDaysOff(["Saturday", "Sunday"]).add(leadTime);
   };
 
-const decorate = (clock: Clock) => (hasCustomFrosting?: boolean) => {
+const bake = (
+  size: Size,
+  orderDay: WeekDay,
+  isMorningOrder?: boolean
+): number => {
+  function isWorkday(day: WeekDay): boolean {
+    const WORK_DAYS: WeekDay[] = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+    ];
+    return WORK_DAYS.includes(day);
+  }
+
+  let remainingDaysOfWork = size === "big" ? 3 : 2;
+  let today = orderDay;
+  let daysPassed = 0;
+
+  if (isWorkday(today) && isMorningOrder) {
+    remainingDaysOfWork--;
+    today = Clock.incrementDayByN(today, 1);
+  }
+  while (remainingDaysOfWork > 0) {
+    if (isWorkday(today)) {
+      remainingDaysOfWork--;
+    }
+    today = Clock.incrementDayByN(today, 1);
+    daysPassed++;
+  }
+
+  return daysPassed;
+};
+
+const decorate = (orderDay: WeekDay, hasCustomFrosting?: boolean): number => {
+  function isWorkday(day: WeekDay): boolean {
+    const WORK_DAYS: WeekDay[] = [
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    return WORK_DAYS.includes(day);
+  }
+
+  let remainingDaysOfWork = hasCustomFrosting ? 2 : 0;
+  let today = orderDay;
+  let daysPassed = 0;
+
+  if (isWorkday(today) && hasCustomFrosting) {
+    remainingDaysOfWork--;
+    today = Clock.incrementDayByN(today, 1);
+  }
+  while (remainingDaysOfWork > 0) {
+    if (isWorkday(today)) {
+      remainingDaysOfWork--;
+    }
+    today = Clock.incrementDayByN(today, 1);
+    daysPassed++;
+  }
+
+  return daysPassed;
+};
+
+const decorateCake = (clock: Clock) => (hasCustomFrosting?: boolean) => {
   const leadTime = hasCustomFrosting ? 1 : 0;
   const daysOff: WeekDay[] = ["Sunday", "Monday"];
   return clock.withDaysOff(daysOff).add(leadTime);
@@ -51,8 +117,10 @@ export function order({
   hasCustomFrosting,
   isMorningOrder,
 }: OrderOptions): DeliveryDate {
-  const ordered = new Clock(orderDate);
-  const baked = bakeCake(ordered)(size, isMorningOrder);
-  const decorated = decorate(baked)(hasCustomFrosting);
-  return decorated.toCalendar();
+  const b = bake(size, orderDate.day, isMorningOrder);
+  const d = decorate(
+    Clock.incrementDayByN(orderDate.day, b),
+    hasCustomFrosting
+  );
+  return new Clock(orderDate).add(b + d).toCalendar();
 }

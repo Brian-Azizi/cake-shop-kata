@@ -56,7 +56,7 @@ describe("Cake Shop", () => {
     expect(result).toStrictEqual(calendarDay("Monday", 1));
   });
 
-  xtest("An order for a small cake with frosting received on Friday morning has a delivery date of Wednesday", () => {
+  test("An order for a small cake with frosting received on Friday morning has a delivery date of Wednesday", () => {
     const result = order({
       size: "small",
       orderDate: calendarDay("Friday"),
