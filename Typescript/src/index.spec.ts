@@ -1,7 +1,7 @@
-import { Calendar, order, WeekDay } from ".";
+import { CalendarDate, order, WeekDay } from ".";
 import { Clock } from "./clock";
 
-const calendarDay = (day: WeekDay, week = 0): Calendar => ({
+const calendarDay = (day: WeekDay, week = 0): CalendarDate => ({
   day,
   date: Clock.DAYS.indexOf(day) + 1 + week * 7,
   month: 1,

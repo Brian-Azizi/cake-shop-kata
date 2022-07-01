@@ -1,4 +1,4 @@
-import { Calendar, WeekDay } from "./index";
+import { CalendarDate, WeekDay } from "./index";
 
 export class Clock {
   public readonly day: WeekDay;
@@ -16,14 +16,14 @@ export class Clock {
     "Sunday",
   ];
 
-  constructor({ day, date, month, year }: Calendar) {
+  constructor({ day, date, month, year }: CalendarDate) {
     this.day = day;
     this.date = date;
     this.month = month;
     this.year = year;
   }
 
-  public toCalendar(): Calendar {
+  public toCalendar(): CalendarDate {
     return {
       day: this.day,
       date: this.date,
