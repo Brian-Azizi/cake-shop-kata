@@ -30,20 +30,33 @@ interface OrderOptions {
   hasCustomFrosting?: boolean;
 }
 
+function bakeCake(
+  size: "small" | "big",
+  orderDate: Calendar,
+  isMorningOrder: boolean | undefined
+) {
+  let leadTime = size === "small" ? 2 : 3;
+  if (isMorningOrder) {
+    leadTime -= 1;
+  }
+  return new Clock(orderDate).add(leadTime).toCalendar();
+}
+
+function decorate(
+  bakeFinishedDate: Calendar,
+  hasCustomFrosting: boolean | undefined
+) {
+  if (!hasCustomFrosting) return bakeFinishedDate;
+  return new Clock(bakeFinishedDate).add(1).toCalendar();
+}
+
 export function order({
   orderDate,
   size,
   hasCustomFrosting,
   isMorningOrder,
 }: OrderOptions): DeliveryDate {
-  const clock = new Clock(orderDate);
-  let leadTime = size === "small" ? 2 : 3;
-  if (isMorningOrder) {
-    leadTime -= 1;
-  }
-  if (hasCustomFrosting) {
-    leadTime += 1;
-  }
-  const deliveryDate = clock.add(leadTime);
-  return deliveryDate.toCalendar();
+  const bakeFinishedDate = bakeCake(size, orderDate, isMorningOrder);
+  const decorationFinishedDate = decorate(bakeFinishedDate, hasCustomFrosting);
+  return decorationFinishedDate;
 }
