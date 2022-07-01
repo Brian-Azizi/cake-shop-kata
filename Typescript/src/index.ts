@@ -21,8 +21,6 @@ export interface Calendar {
 type OrderDate = Calendar;
 type DeliveryDate = Calendar;
 
-type OrderTime = "Morning" | "Afternoon";
-
 interface OrderOptions {
   orderDate: OrderDate;
   size: Size;
@@ -30,75 +28,82 @@ interface OrderOptions {
   hasCustomFrosting?: boolean;
 }
 
-const bake = (
-  size: Size,
-  orderDay: WeekDay,
-  isMorningOrder?: boolean
-): number => {
-  function isWorkday(day: WeekDay): boolean {
-    const WORK_DAYS: WeekDay[] = [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-    ];
-    return WORK_DAYS.includes(day);
+class Worker {
+  private readonly workDays: WeekDay[];
+  constructor(workDays: WeekDay[]) {
+    this.workDays = workDays;
   }
 
-  let remainingDaysOfWork = size === "big" ? 3 : 2;
-  let today = orderDay;
-  let daysPassed = 0;
-
-  if (isWorkday(today) && isMorningOrder) {
-    remainingDaysOfWork--;
-    today = Clock.incrementDayByN(today, 1);
+  private isWorkday(day: WeekDay) {
+    return this.workDays.includes(day);
   }
-  while (remainingDaysOfWork > 0) {
-    if (isWorkday(today)) {
-      remainingDaysOfWork--;
+
+  calculateDaysToDoWork(startDay: WeekDay, fullDaysRequired: number): number {
+    let remainingDaysOfWork = fullDaysRequired;
+    let today = startDay;
+    let daysPassed = 0;
+
+    while (remainingDaysOfWork > 0) {
+      if (this.isWorkday(today)) {
+        remainingDaysOfWork--;
+      }
+      if (remainingDaysOfWork === 0) {
+        break;
+      }
+      today = Clock.incrementDayByN(today, 1);
+      daysPassed++;
     }
-    today = Clock.incrementDayByN(today, 1);
-    daysPassed++;
+
+    return daysPassed;
+  }
+}
+
+class Decorator extends Worker {
+  private readonly hasCustomFrosting?: boolean;
+  static WORK_DAYS: WeekDay[] = [
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
+  constructor(hasCustomFrosting?: boolean) {
+    super(Decorator.WORK_DAYS);
+    this.hasCustomFrosting = hasCustomFrosting;
   }
 
-  return daysPassed;
-};
-
-const decorate = (orderDay: WeekDay, hasCustomFrosting?: boolean): number => {
-  function isWorkday(day: WeekDay): boolean {
-    const WORK_DAYS: WeekDay[] = [
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
-    return WORK_DAYS.includes(day);
+  calculateDaysToDoWork(startDay: WeekDay): number {
+    if (!this.hasCustomFrosting) return 0;
+    return super.calculateDaysToDoWork(startDay, 2);
   }
-  if (!hasCustomFrosting) {
-    return 0;
-  }
+}
 
-  let remainingDaysOfWork = 1;
-  let today = orderDay;
-  let daysPassed = 0;
+class Baker extends Worker {
+  private readonly isMorningOrder?: boolean;
+  private readonly size: Size;
 
-  if (!isWorkday(today)) {
-    today = Clock.incrementDayByN(today, 1);
-    daysPassed++;
+  static WORK_DAYS: WeekDay[] = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+  ];
+
+  constructor(size: Size, isMorningOrder?: boolean) {
+    super(Baker.WORK_DAYS);
+    this.isMorningOrder = isMorningOrder;
+    this.size = size;
   }
 
-  while (remainingDaysOfWork > 0) {
-    if (isWorkday(today)) {
-      remainingDaysOfWork--;
-    }
-    today = Clock.incrementDayByN(today, 1);
-    daysPassed++;
-  }
+  calculateDaysToDoWork(startDay: WeekDay): number {
+    let fullDaysOfWorkRequired = this.size === "big" ? 3 : 2;
+    if (!this.isMorningOrder) fullDaysOfWorkRequired++;
 
-  return daysPassed;
-};
+    return super.calculateDaysToDoWork(startDay, fullDaysOfWorkRequired);
+  }
+}
 
 export function order({
   orderDate,
@@ -106,10 +111,11 @@ export function order({
   hasCustomFrosting,
   isMorningOrder,
 }: OrderOptions): DeliveryDate {
-  const b = bake(size, orderDate.day, isMorningOrder);
-  const d = decorate(
-    Clock.incrementDayByN(orderDate.day, b),
-    hasCustomFrosting
+  const baker = new Baker(size, isMorningOrder);
+  const b = baker.calculateDaysToDoWork(orderDate.day);
+  const decorator = new Decorator(hasCustomFrosting);
+  const d = decorator.calculateDaysToDoWork(
+    Clock.incrementDayByN(orderDate.day, b)
   );
   return new Clock(orderDate).add(b + d).toCalendar();
 }
